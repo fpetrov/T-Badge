@@ -12,7 +12,7 @@ using T_Badge.Persistence;
 namespace T_Badge.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240708221644_Initial")]
+    [Migration("20240710143126_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
