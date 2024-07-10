@@ -16,6 +16,7 @@ public static class UserEndpoints
         group.MapGet("/", GetUsers).RequireAuthorization();
         group.MapGet("/{id:int}", GetUser).RequireAuthorization();
         group.MapPost("/login", SignIn);
+        group.MapGet("/me", GetMe).RequireAuthorization();
         group.MapPost("/register", SignUp);
 
         return group;
@@ -108,8 +109,25 @@ public static class UserEndpoints
             createdUser.Username,
             jwtToken));
     }
+    
+    private static async Task<IResult> GetMe(
+        HttpContext context,
+        ApplicationContext db)
+    {
+        var identity = context.GetIdentity();
+        
+        var user = await db.Users
+            .Include(t => t.VisitedEvents)
+            .FirstOrDefaultAsync(t => t.Id == identity.Id);
+        
+        GetUserAchievements(user);
+        
+        return user is not null
+            ? Results.Ok(user)
+            : Results.NotFound();
+    }
 
-    private static List<Achievement> _achievements =
+    private static readonly List<Achievement> Achievements =
     [
         new()
         {
@@ -141,15 +159,15 @@ public static class UserEndpoints
     private static void GetUserAchievements(User user)
     {
         if (user.VisitedEvents.Count > 0)
-            user.Achievements.Add(_achievements[0]);
+            user.Achievements.Add(Achievements[0]);
 
         if (user.VisitedEvents.Count >= 3)
-            user.Achievements.Add(_achievements[2]);
+            user.Achievements.Add(Achievements[2]);
 
         if (user.VisitedEvents.Count >= 5)
-            user.Achievements.Add(_achievements[4]);
+            user.Achievements.Add(Achievements[4]);
 
         if (user.CreatedEvents.Count > 0)
-            user.Achievements.Add(_achievements[3]);
+            user.Achievements.Add(Achievements[3]);
     }
 }

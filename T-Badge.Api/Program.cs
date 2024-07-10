@@ -24,4 +24,4 @@ api
     .MapGroup("/events")
     .MapEventEndpoints();
 
-app.Run("0.0.0.0:10000");
+app.Run();
