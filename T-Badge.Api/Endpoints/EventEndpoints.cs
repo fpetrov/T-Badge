@@ -15,7 +15,6 @@ public static class EventEndpoints
         group.MapGet("/", GetEvents).RequireAuthorization(AdminPolicy.Key);
         group.MapGet("/{id:int}", GetEvent).RequireAuthorization();
         group.MapPost("/", CreateEvent).RequireAuthorization();
-        group.MapGet("/visit/{eventId:int}", VisitEvent).RequireAuthorization();
         
         return group;
     }
@@ -58,23 +57,6 @@ public static class EventEndpoints
         db.Events.Add(eventEntity);
         await db.SaveChangesAsync();
         
-        return Results.Ok();
-    }
-    
-    private static async Task<IResult> VisitEvent(
-        [FromRoute] int eventId,
-        ApplicationContext db,
-        HttpContext context)
-    {
-        var identity = context.GetIdentity();
-
-        var user = await db.Users.FindAsync(identity.Id);
-        var visitedEvent = await db.Events.FindAsync(eventId);
-
-        user.VisitedEvents.Add(visitedEvent);
-
-        await db.SaveChangesAsync();
-
         return Results.Ok();
     }
 }

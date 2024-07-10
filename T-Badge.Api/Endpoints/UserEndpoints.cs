@@ -17,6 +17,7 @@ public static class UserEndpoints
         group.MapGet("/{id:int}", GetUser).RequireAuthorization();
         group.MapPost("/login", SignIn);
         group.MapGet("/me", GetMe).RequireAuthorization();
+        group.MapGet("/visit/{eventId:int}", VisitEvent).RequireAuthorization();
         group.MapPost("/register", SignUp);
 
         return group;
@@ -24,30 +25,21 @@ public static class UserEndpoints
 
     private static async Task<IResult> GetUsers(
         HttpContext context,
-        [FromServices] ApplicationContext db,
-        ILogger<User> logger)
+        [FromServices] ApplicationContext db)
     {
-        var identity = context.GetIdentity();
-
-        logger.LogInformation($"{identity.Username} requested users list.");
-
         return Results.Ok(await db.Users.ToListAsync());
     }
 
     private static async Task<IResult> GetUser(
-        HttpContext context,
         [FromRoute] int id,
-        [FromServices] ApplicationContext db,
-        ILogger<User> logger)
+        [FromServices] ApplicationContext db)
     {
-        var identity = context.GetIdentity();
-
-        logger.LogInformation($"{identity.Username} requested user with id {id}.");
-
         var user = await db.Users
             .Include(t => t.VisitedEvents)
             .FirstOrDefaultAsync(t => t.Id == id);
 
+        user.Achievements.Clear();
+        
         // Recalculate user achievements
         GetUserAchievements(user);
 
@@ -56,8 +48,6 @@ public static class UserEndpoints
         return user is not null
             ? Results.Ok(user)
             : Results.NotFound();
-
-        // return Results.Ok(await db.Users.FindAsync(id));
     }
 
     private static async Task<IResult> SignIn(
@@ -115,16 +105,28 @@ public static class UserEndpoints
         ApplicationContext db)
     {
         var identity = context.GetIdentity();
+
+        return await GetUser(identity.Id, db);
+    }
+    
+    private static async Task<IResult> VisitEvent(
+        [FromRoute] int eventId,
+        ApplicationContext db,
+        HttpContext context)
+    {
+        var identity = context.GetIdentity();
+
+        var user = await db.Users.FindAsync(identity.Id);
+        var visitedEvent = await db.Events.FindAsync(eventId);
         
-        var user = await db.Users
-            .Include(t => t.VisitedEvents)
-            .FirstOrDefaultAsync(t => t.Id == identity.Id);
-        
-        GetUserAchievements(user);
-        
-        return user is not null
-            ? Results.Ok(user)
-            : Results.NotFound();
+        if (visitedEvent is null)
+            return Results.NotFound();
+
+        user.VisitedEvents.Add(visitedEvent);
+
+        await db.SaveChangesAsync();
+
+        return Results.Ok();
     }
 
     private static readonly List<Achievement> Achievements =
