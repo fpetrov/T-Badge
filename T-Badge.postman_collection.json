@@ -99,7 +99,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"fpetrov\",\r\n    \"password\": \"123\"\r\n}",
+							"raw": "{\r\n    \"username\": \"fpetrovv\",\r\n    \"password\": \"123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -114,6 +114,34 @@
 							"path": [
 								"users",
 								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Me",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ADDRESS}}/users/me",
+							"host": [
+								"{{ADDRESS}}"
+							],
+							"path": [
+								"users",
+								"me"
 							]
 						}
 					},
@@ -212,6 +240,14 @@
 								"events"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate QR Code",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
