@@ -302,8 +302,6 @@ node_modules/
 *.dsp
 
 # Visual Studio 6 technical files
-*.ncb
-*.aps
 
 # Visual Studio LightSwitch build output
 **/*.HTMLClient/GeneratedArtifacts
@@ -396,3 +394,32 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+*.swp
+*.*~
+.DS_Store
+nupkg/
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# Visual Studio
+
+# Fleet
+.fleet/
+
+# Code Rush
+.cr/
+
+# User-specific files
+
+# Build results
+build/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
