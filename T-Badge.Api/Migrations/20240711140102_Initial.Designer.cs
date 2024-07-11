@@ -12,7 +12,7 @@ using T_Badge.Persistence;
 namespace T_Badge.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240710143126_Initial")]
+    [Migration("20240711140102_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -49,6 +49,9 @@ namespace T_Badge.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AuthorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Code")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")

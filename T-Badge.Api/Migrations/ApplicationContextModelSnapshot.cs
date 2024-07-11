@@ -48,6 +48,9 @@ namespace T_Badge.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Code")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");

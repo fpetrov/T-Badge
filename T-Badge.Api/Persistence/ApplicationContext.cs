@@ -26,5 +26,10 @@ public class ApplicationContext(DbContextOptions<ApplicationContext> options) : 
             .Entity<Event>()
             .HasOne(t => t.Author)
             .WithMany(t => t.CreatedEvents);
+
+        modelBuilder
+            .Entity<Event>()
+            .Property(t => t.Code)
+            .ValueGeneratedNever();
     }
 }

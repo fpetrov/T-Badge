@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
 using T_Badge.Common.Extensions;
@@ -16,7 +17,7 @@ public static class EventEndpoints
     {
         // group.MapGet("/", GetEvents).RequireAuthorization(AdminPolicy.Key);
         group.MapGet("/", GetEvents).RequireAuthorization();
-        group.MapGet("/{id:int}", GetEvent).RequireAuthorization();
+        group.MapGet("/{code:int}", GetEvent).RequireAuthorization();
         group.MapPost("/", CreateEvent).RequireAuthorization();
         group.MapGet("/qr/{id:int}", GenerateQrCode).RequireAuthorization();
         
@@ -30,10 +31,10 @@ public static class EventEndpoints
     }
     
     private static async Task<IResult> GetEvent(
-        int id,
+        int code,
         ApplicationContext db)
     {
-        return await db.Events.FindAsync(id)
+        return await db.Events.FirstOrDefaultAsync(t => t.Code == code)
             is { } result
                 ? Results.Ok(result)
                 : Results.NotFound();
