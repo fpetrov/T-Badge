@@ -19,7 +19,7 @@ public static class EventEndpoints
         group.MapGet("/", GetEvents).RequireAuthorization();
         group.MapGet("/{code:int}", GetEvent).RequireAuthorization();
         group.MapPost("/", CreateEvent).RequireAuthorization();
-        group.MapGet("/qr/{id:int}", GenerateQrCode).RequireAuthorization();
+        group.MapGet("/qr/{code:int}", GenerateQrCode).RequireAuthorization();
         
         return group;
     }
@@ -66,17 +66,17 @@ public static class EventEndpoints
     }
     
     private static IResult GenerateQrCode(
-        int id,
+        int code,
         [FromServices] StringEncryptor encryptor)
     {
-        var encryptedBytes = encryptor.Encrypt($"EventId:{id}");
+        var encryptedBytes = encryptor.Encrypt($"EventCode:{code}");
         var encrypted = Convert.ToBase64String(encryptedBytes);
         
         using var generator = new QRCodeGenerator();
         using var data = generator.CreateQrCode(encrypted, QRCodeGenerator.ECCLevel.Q);
-        using var code = new PngByteQRCode(data);
+        using var qrCode = new PngByteQRCode(data);
 
-        var codeBytes = code.GetGraphic(25);
+        var codeBytes = qrCode.GetGraphic(25);
 
         return Results.File(codeBytes, "image/png");
     }

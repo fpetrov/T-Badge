@@ -18,7 +18,7 @@ public static class UserEndpoints
         group.MapGet("/{id:int}", GetUser).RequireAuthorization();
         group.MapPost("/login", SignIn);
         group.MapGet("/me", GetMe).RequireAuthorization();
-        group.MapGet("/visit/{eventId:int}", VisitEvent).RequireAuthorization();
+        group.MapGet("/visit/{eventCode:int}", VisitEvent).RequireAuthorization();
         group.MapGet("/visit/qr/{qrMetadata}", VisitEventWithQr).RequireAuthorization();
         group.MapPost("/register", SignUp);
 
@@ -112,14 +112,14 @@ public static class UserEndpoints
     }
     
     private static async Task<IResult> VisitEvent(
-        [FromRoute] int eventId,
+        [FromRoute] int eventCode,
         ApplicationContext db,
         HttpContext context)
     {
         var identity = context.GetIdentity();
 
         var user = await db.Users.FindAsync(identity.Id);
-        var visitedEvent = await db.Events.FindAsync(eventId);
+        var visitedEvent = await db.Events.FirstOrDefaultAsync(t => t.Code == eventCode);
         
         if (visitedEvent is null)
             return Results.NotFound();
@@ -139,9 +139,9 @@ public static class UserEndpoints
     {
         var decryptedBytes = Convert.FromBase64String(qrMetadata);
         var decrypted = encryptor.Decrypt(decryptedBytes);
-        var eventId = int.Parse(decrypted.Split(':')[1]);
+        var eventCode = int.Parse(decrypted.Split(':')[1]);
 
-        return await VisitEvent(eventId, db, context);
+        return await VisitEvent(eventCode, db, context);
     }
 
     private static readonly List<Achievement> Achievements =
