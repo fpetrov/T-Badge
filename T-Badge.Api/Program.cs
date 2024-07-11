@@ -1,4 +1,5 @@
 using T_Badge;
+using T_Badge.Common.Extensions;
 using T_Badge.Endpoints;
 using T_Badge.Infrastructure;
 using T_Badge.Middlewares;
@@ -12,11 +13,12 @@ builder.Services
 
 var app = builder.Build();
 
+app.ApplyMigrations();
 app.UseMiddleware<AuthenticationMiddleware>();
 
-app.MapGet("/", () => "Please, use /api/... endpoints!");
-
 var api = app.MapGroup("/api");
+
+api.MapGet("/", () => "T-Badge API is here!");
 
 api
     .MapGroup("/users")
