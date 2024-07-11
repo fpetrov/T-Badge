@@ -12,7 +12,8 @@ public static class EventEndpoints
 {
     public static RouteGroupBuilder MapEventEndpoints(this RouteGroupBuilder group)
     {
-        group.MapGet("/", GetEvents).RequireAuthorization(AdminPolicy.Key);
+        // group.MapGet("/", GetEvents).RequireAuthorization(AdminPolicy.Key);
+        group.MapGet("/", GetEvents).RequireAuthorization();
         group.MapGet("/{id:int}", GetEvent).RequireAuthorization();
         group.MapPost("/", CreateEvent).RequireAuthorization();
         
