@@ -33,7 +33,7 @@ public static class DependencyInjection
         // MARK: Maybe it will raise error.
         var jwtSettings = JwtSettings.Default;
         configuration.Bind(JwtSettings.SectionName, jwtSettings);
-
+        
         services.AddSingleton(Options.Create(jwtSettings));
 
         services
