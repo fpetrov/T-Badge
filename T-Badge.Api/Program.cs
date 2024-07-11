@@ -14,6 +14,8 @@ var app = builder.Build();
 
 app.UseMiddleware<AuthenticationMiddleware>();
 
+app.MapGet("/", () => "Please, use /api/... endpoints!");
+
 var api = app.MapGroup("/api");
 
 api
