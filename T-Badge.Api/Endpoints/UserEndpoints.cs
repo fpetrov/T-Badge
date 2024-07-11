@@ -4,6 +4,7 @@ using T_Badge.Common.Extensions;
 using T_Badge.Common.Interfaces.Authentication;
 using T_Badge.Contracts.Authentication.Requests;
 using T_Badge.Contracts.Authentication.Responses;
+using T_Badge.Infrastructure.QrGeneration;
 using T_Badge.Models;
 using T_Badge.Persistence;
 
@@ -18,6 +19,7 @@ public static class UserEndpoints
         group.MapPost("/login", SignIn);
         group.MapGet("/me", GetMe).RequireAuthorization();
         group.MapGet("/visit/{eventId:int}", VisitEvent).RequireAuthorization();
+        group.MapGet("/visit/qr/{qrMetadata}", VisitEventWithQr).RequireAuthorization();
         group.MapPost("/register", SignUp);
 
         return group;
@@ -127,6 +129,19 @@ public static class UserEndpoints
         await db.SaveChangesAsync();
 
         return Results.Ok();
+    }
+    
+    private static async Task<IResult> VisitEventWithQr(
+        [FromRoute] string qrMetadata,
+        ApplicationContext db,
+        HttpContext context,
+        [FromServices] StringEncryptor encryptor)
+    {
+        var decryptedBytes = Convert.FromBase64String(qrMetadata);
+        var decrypted = encryptor.Decrypt(decryptedBytes);
+        var eventId = int.Parse(decrypted.Split(':')[1]);
+
+        return await VisitEvent(eventId, db, context);
     }
 
     private static readonly List<Achievement> Achievements =

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QRCoder;
 using T_Badge.Common.Extensions;
 using T_Badge.Common.Policies;
 using T_Badge.Contracts.Events.Requests;
+using T_Badge.Infrastructure.QrGeneration;
 using T_Badge.Models;
 using T_Badge.Persistence;
 
@@ -16,6 +18,7 @@ public static class EventEndpoints
         group.MapGet("/", GetEvents).RequireAuthorization();
         group.MapGet("/{id:int}", GetEvent).RequireAuthorization();
         group.MapPost("/", CreateEvent).RequireAuthorization();
+        group.MapGet("/qr/{id:int}", GenerateQrCode).RequireAuthorization();
         
         return group;
     }
@@ -59,5 +62,21 @@ public static class EventEndpoints
         await db.SaveChangesAsync();
         
         return Results.Ok();
+    }
+    
+    private static IResult GenerateQrCode(
+        int id,
+        [FromServices] StringEncryptor encryptor)
+    {
+        var encryptedBytes = encryptor.Encrypt($"EventId:{id}");
+        var encrypted = Convert.ToBase64String(encryptedBytes);
+        
+        using var generator = new QRCodeGenerator();
+        using var data = generator.CreateQrCode(encrypted, QRCodeGenerator.ECCLevel.Q);
+        using var code = new PngByteQRCode(data);
+
+        var codeBytes = code.GetGraphic(25);
+
+        return Results.File(codeBytes, "image/png");
     }
 }

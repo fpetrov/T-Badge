@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using T_Badge.Common.Interfaces.Authentication;
 using T_Badge.Common.Policies;
 using T_Badge.Infrastructure.Authentication;
+using T_Badge.Infrastructure.QrGeneration;
 using T_Badge.Persistence;
 
 namespace T_Badge.Infrastructure;
@@ -20,6 +21,9 @@ public static class DependencyInjection
             .AddDefaultAuthentication(configuration);
         
         services.AddSingleton<IPasswordVerifier, PasswordVerifier>();
+        
+        var (key, iv) = StringEncryptor.GenerateSalts();
+        services.AddSingleton(new StringEncryptor(key, iv));
         
         return services;
     }

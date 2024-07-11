@@ -53,13 +53,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{ADDRESS}}/users/1",
+							"raw": "{{ADDRESS}}/users/2",
 							"host": [
 								"{{ADDRESS}}"
 							],
 							"path": [
 								"users",
-								"1"
+								"2"
 							]
 						}
 					},
@@ -72,7 +72,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Fedor\",\r\n    \"username\": \"fpetrovv\",\r\n    \"password\": \"123\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Fedor\",\r\n    \"username\": \"fpetrovvv\",\r\n    \"password\": \"123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -99,7 +99,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"fpetrovv\",\r\n    \"password\": \"123\"\r\n}",
+							"raw": "{\r\n    \"username\": \"fpetrov\",\r\n    \"password\": \"123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -171,6 +171,36 @@
 								"users",
 								"visit",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Visit Event with QR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ADDRESS}}/users/visit/qr/o1IFVztQEY+yYd4R0clbzw==",
+							"host": [
+								"{{ADDRESS}}"
+							],
+							"path": [
+								"users",
+								"visit",
+								"qr",
+								"o1IFVztQEY+yYd4R0clbzw=="
 							]
 						}
 					},
@@ -275,8 +305,29 @@
 				{
 					"name": "Generate QR Code",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{ADDRESS}}/events/qr/1",
+							"host": [
+								"{{ADDRESS}}"
+							],
+							"path": [
+								"events",
+								"qr",
+								"1"
+							]
+						}
 					},
 					"response": []
 				}
